@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "604991677262",
+    "project_id": "cmsc5303-scott-mobileapps",
+    "storage_bucket": "cmsc5303-scott-mobileapps.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604991677262:android:1ba56d0983b925ceedb41f",
+        "android_client_info": {
+          "package_name": "edu.uco.smorris31.cs5303.lesson3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "604991677262-55hq7rhhmnlc17vq9hkuipt26i5ce73u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCemtrmmyKkVpFFvSMjyKikhQlxXIBvYJI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "604991677262-55hq7rhhmnlc17vq9hkuipt26i5ce73u.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "604991677262-q8u4mmbg73p93uq0b1jk9ito716bpc6k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "edu.uco.smorris31.cs5303.lesson3"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604991677262:android:24b4481eba773399edb41f",
+        "android_client_info": {
+          "package_name": "edu.uco.smorris31.cs5303.termproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "604991677262-55hq7rhhmnlc17vq9hkuipt26i5ce73u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCemtrmmyKkVpFFvSMjyKikhQlxXIBvYJI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "604991677262-55hq7rhhmnlc17vq9hkuipt26i5ce73u.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "604991677262-q8u4mmbg73p93uq0b1jk9ito716bpc6k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "edu.uco.smorris31.cs5303.lesson3"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
