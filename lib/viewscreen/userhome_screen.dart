@@ -150,6 +150,10 @@ class _UserHomeState extends State<UserHomeScreen> {
                             'Shared With: ${con.photoMemoList[index].sharedWith}'),
                         Text(
                             'Timestamp: ${con.photoMemoList[index].timestamp}'),
+                        Text(
+                            'Likes: ${con.photoMemoList[index].like}'),
+                        Text(
+                            'Dislikes: ${con.photoMemoList[index].dislike}'),
                       ],
                     ),
                     onTap: () => con.detailedView(index),

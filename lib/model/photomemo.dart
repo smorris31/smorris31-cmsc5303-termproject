@@ -8,7 +8,9 @@ enum DocKeyPhotoMemo {
   photoURL,
   timestamp,
   imageLabels,
-  sharedWith
+  sharedWith,
+  like,
+  dislike,
 }
 
 class PhotoMemo {
@@ -23,6 +25,8 @@ class PhotoMemo {
   late List<dynamic>
       imageLabels; //ML generated image lables; use dynamic and let firestore determine the type
   late List<dynamic> sharedWith;
+  late int like;
+  late int dislike;
 
   //Constructor
   PhotoMemo({
@@ -35,6 +39,8 @@ class PhotoMemo {
     this.timestamp,
     List<dynamic>? imageLabels,
     List<dynamic>? sharedWith,
+    this.like = 0,
+    this.dislike = 0,
   }) {
     this.imageLabels = imageLabels == null ? [] : [...imageLabels];
     this.sharedWith = sharedWith == null ? [] : [...sharedWith];
@@ -52,6 +58,8 @@ class PhotoMemo {
     // create a list, copy the content with spread operator
     sharedWith = [...p.sharedWith];
     imageLabels = [...p.imageLabels];
+    like = p.like;
+    dislike = p.dislike;
   }
 
   //Copy form a.copyFrom(b) ==> a = b
@@ -69,6 +77,8 @@ class PhotoMemo {
     sharedWith.addAll(p.sharedWith);
     imageLabels.clear();
     imageLabels.addAll(p.imageLabels);
+    like = p.like;
+    dislike = p.dislike;
   }
 
   //serialization
@@ -82,6 +92,8 @@ class PhotoMemo {
       DocKeyPhotoMemo.timestamp.name: timestamp,
       DocKeyPhotoMemo.sharedWith.name: sharedWith,
       DocKeyPhotoMemo.imageLabels.name: imageLabels,
+      DocKeyPhotoMemo.like.name: like,
+      DocKeyPhotoMemo.dislike.name: dislike,
     };
   }
 
@@ -104,6 +116,8 @@ class PhotoMemo {
               doc[DocKeyPhotoMemo.timestamp.name].millisecondsSinceEpoch,
             )
           : DateTime.now(),
+      like: doc[DocKeyPhotoMemo.like.name] ??= 0,
+      dislike: doc[DocKeyPhotoMemo.dislike.name] ??= 0,
     );
   }
 

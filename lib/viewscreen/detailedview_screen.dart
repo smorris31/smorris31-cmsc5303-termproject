@@ -289,10 +289,8 @@ class _Controller {
 
   void saveSharedWith(String? value) {
     if (value != null && value.trim().isNotEmpty) {
-      print(value);
       var emailList =
           value.trim().split(RegExp('(,|;| )+')).map((e) => e.trim()).toList();
-          print(emailList);
       tempMemo.sharedWith = emailList;
     } else {
       tempMemo.sharedWith = [];

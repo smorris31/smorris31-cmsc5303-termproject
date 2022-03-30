@@ -1,15 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:termproject/controller/firestore_controller.dart';
+import 'package:termproject/model/photolikedislike.dart';
 import 'package:termproject/model/viewsharedphoto.dart';
-import 'package:termproject/viewscreen/view/view_util.dart';
 import 'package:termproject/viewscreen/view/webimage.dart';
 import '../model/photomemo.dart';
 import '../model/constant.dart';
 
 class SharedWithScreen extends StatefulWidget {
   const SharedWithScreen(
-      {required this.photoMemoList, required this.user, required this.newShares,
+      {required this.photoMemoList,
+      required this.user,
+      required this.newShares,
       Key? key})
       : super(key: key);
 
@@ -26,6 +28,7 @@ class SharedWithScreen extends StatefulWidget {
 
 class _SharedWithState extends State<SharedWithScreen> {
   late _Controller con;
+  var formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -78,6 +81,30 @@ class _SharedWithState extends State<SharedWithScreen> {
                                 : const SizedBox(
                                     height: 1.0,
                                   ),
+                            Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () =>
+                                          con.likePhotoMemo(photoMemo),
+                                      icon: const Icon(Icons.thumb_up),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () =>
+                                          con.dislikePhotoMemo(photoMemo),
+                                      icon: const Icon(Icons.thumb_down),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -91,10 +118,10 @@ class _SharedWithState extends State<SharedWithScreen> {
 
 class _Controller {
   _SharedWithState state;
+  late PhotoMemo tempMemo;
   _Controller(this.state);
 
   void updateViewPhotoCollection() async {
-    startCircularProgress(state.context);
     for (int i = state.widget.newShares.length - 1; i >= 0; i--) {
       state.widget.newShares[i].dateViewed = DateTime.now();
       state.widget.newShares[i].viewed = true;
@@ -102,6 +129,25 @@ class _Controller {
           docId: state.widget.newShares[i].docId!,
           update: state.widget.newShares[i].toFirestoreDoc());
     }
-    stopCircularProgress(state.context);
+  }
+
+  void likePhotoMemo(PhotoMemo photoMemo) async {
+    PhotoLikeDislike photoLikeDislike = PhotoLikeDislike();
+    photoLikeDislike.photoCollectionID = photoMemo.docId!;
+    photoLikeDislike.reviewerEmail = state.widget.user.email!;
+    photoLikeDislike.like = 1;
+    photoLikeDislike.dateReviewed = DateTime.now();
+    String docId = await FirestoreController.addPhotoLikesDislikes(photoLikeDislike: photoLikeDislike);
+    photoLikeDislike.docId = docId;
+  }
+
+  void dislikePhotoMemo(PhotoMemo photoMemo) async {
+    PhotoLikeDislike photoLikeDislike = PhotoLikeDislike();
+    photoLikeDislike.photoCollectionID = photoMemo.docId!;
+    photoLikeDislike.reviewerEmail = state.widget.user.email!;
+    photoLikeDislike.dislike = 1;
+    photoLikeDislike.dateReviewed = DateTime.now();
+    String docId = await FirestoreController.addPhotoLikesDislikes(photoLikeDislike: photoLikeDislike);
+    photoLikeDislike.docId = docId;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:termproject/model/photolikedislike.dart';
 import 'package:termproject/model/viewsharedphoto.dart';
 import 'package:termproject/model/constant.dart';
 import 'package:termproject/model/photomemo.dart';
@@ -21,6 +22,15 @@ class FirestoreController {
     DocumentReference ref = await FirebaseFirestore.instance
         .collection(Constant.viewedSharedPhotoCollection)
         .add(newShare.toFirestoreDoc());
+    return ref.id;
+  }
+
+  static Future<String> addPhotoLikesDislikes({
+    required PhotoLikeDislike photoLikeDislike,
+  }) async {
+    DocumentReference ref = await FirebaseFirestore.instance
+        .collection(Constant.photoLikeDislike)
+        .add(photoLikeDislike.toFirestoreDoc());
     return ref.id;
   }
 
