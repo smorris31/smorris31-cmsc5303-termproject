@@ -303,7 +303,11 @@ class _Controller {
           arguments: {
             ArgKey.photomemolist: photoMemoList,
             ArgKey.user: state.widget.user,
+            ArgKey.newShareList: newSharedPhotos,
           });
+      state.render(() {
+        newSharedPhotos.clear();
+      });
       Navigator.of(state.context).pop(); //push in the drawer
     } catch (e) {
       if (Constant.devMode) print('============= get Shared With Error $e');

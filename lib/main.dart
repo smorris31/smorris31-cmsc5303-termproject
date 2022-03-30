@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:termproject/viewscreen/addphotomemo_screen.dart';
 import 'package:termproject/viewscreen/detailedview_screen.dart';
 import 'package:termproject/viewscreen/error_screen.dart';
-import 'package:termproject/viewscreen/sharedWith_Screen.dart';
+import 'package:termproject/viewscreen/sharedwith_screen.dart';
 import 'package:termproject/viewscreen/signup_screen.dart';
 import 'package:termproject/viewscreen/start_screen.dart';
 import 'package:termproject/viewscreen/userhome_screen.dart';
@@ -89,9 +89,11 @@ class TermProject extends StatelessWidget {
             var arguments = args as Map;
             var user = arguments[ArgKey.user];
             var photoMemoList = arguments[ArgKey.photomemolist];
+            var newShareList = arguments[ArgKey.newShareList];
             return SharedWithScreen(
               user: user,
               photoMemoList: photoMemoList,
+              newShares: newShareList,
             );
           }
         }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:termproject/model/viewsharedphoto.dart';
 import 'package:termproject/model/constant.dart';
 import 'package:termproject/model/photomemo.dart';
@@ -46,7 +47,6 @@ class FirestoreController {
   static Future<List<ViewSharedPhoto>> getNewPhotoShares({
     required String email,
   }) async {
-    print('**********Query Viewed Shared ***********');
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Constant.viewedSharedPhotoCollection)
         .where(DocKeyViewedPhotoMemo.sharedWithEmail.name, isEqualTo: email)
@@ -62,7 +62,6 @@ class FirestoreController {
         if (p != null) result.add(p);
       }
     }
-    print('******* found results **********');
     return result;
   }
 
@@ -72,6 +71,16 @@ class FirestoreController {
   }) async {
     await FirebaseFirestore.instance
         .collection(Constant.photoMemoCollection)
+        .doc(docId)
+        .update(update);
+  }
+
+  static Future<void> updateViewedPhoto({
+    required String docId,
+    required Map<String, dynamic> update,
+  }) async {
+    await FirebaseFirestore.instance
+        .collection(Constant.viewedSharedPhotoCollection)
         .doc(docId)
         .update(update);
   }

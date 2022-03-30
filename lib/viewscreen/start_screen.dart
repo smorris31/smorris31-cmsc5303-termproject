@@ -46,7 +46,7 @@ class _StartState extends State<StartScreen> {
             child: Column(
               children: [
                 Text(
-                  'PhotoMemo',
+                  'Travel PhotoMemo',
                   style: Theme.of(context).textTheme.headline3,
                 ),
                 TextFormField(
@@ -113,12 +113,8 @@ class _Controller {
       //Before navigating to user home get list of photos
       List<PhotoMemo> photoMemoList =
           await FirestoreController.getPhotoMemoList(email: email!);
-      print("************** Got Photomemos ***********");
-
-      print("************** Get ViewSharedPhotos ***********");
       List<ViewSharedPhoto> newShares = 
           await FirestoreController.getNewPhotoShares(email: email!);
-      print('########## Retrived ViewSharedPhotos ##############');
       stopCircularProgress(state.context);
 
       Navigator.pushNamed(
