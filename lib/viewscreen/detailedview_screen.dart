@@ -8,6 +8,7 @@ import 'package:termproject/controller/cloudstorage_controller.dart';
 import 'package:termproject/controller/firestore_controller.dart';
 import 'package:termproject/controller/ml_controller.dart';
 import 'package:termproject/model/constant.dart';
+import 'package:termproject/model/viewsharedphoto.dart';
 import 'package:termproject/viewscreen/view/view_util.dart';
 import 'package:termproject/viewscreen/view/webimage.dart';
 import '../model/photomemo.dart';
@@ -222,6 +223,16 @@ class _Controller {
       }
       if (!listEquals(tempMemo.sharedWith, state.widget.photoMemo.sharedWith)) {
         update[DocKeyPhotoMemo.sharedWith.name] = tempMemo.sharedWith;
+        for (int i = 0; i == tempMemo.sharedWith.length - 1; i++) {
+          ViewSharedPhoto sharedWith = ViewSharedPhoto();
+          sharedWith.dateShared = tempMemo.timestamp;
+          sharedWith.photoCollectionID = tempMemo.docId!;
+          sharedWith.sharedWithEmail = tempMemo.sharedWith[i];
+          sharedWith.sharedBy = tempMemo.createdBy;
+          String shareDocID = await FirestoreController.addNewShareEntry(newShare: sharedWith);
+          sharedWith.docId = shareDocID;
+          //state.widget.newShareList.insert(0, sharedWith);
+        }
       }
 
       if (update.isNotEmpty) {

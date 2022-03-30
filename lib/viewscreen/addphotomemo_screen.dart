@@ -8,13 +8,15 @@ import 'package:termproject/controller/firestore_controller.dart';
 import 'package:termproject/controller/ml_controller.dart';
 import 'package:termproject/model/constant.dart';
 import 'package:termproject/model/photomemo.dart';
+import 'package:termproject/model/viewsharedphoto.dart';
 import 'package:termproject/viewscreen/view/view_util.dart';
 
 class AddPhotoMemoScreen extends StatefulWidget {
   final User user;
   final List<PhotoMemo> photoMemoList;
+  final List<ViewSharedPhoto> newShareList;
 
-  const AddPhotoMemoScreen({required this.user, required this.photoMemoList, Key? key}) : super(key: key);
+  const AddPhotoMemoScreen({required this.user, required this.photoMemoList, required this.newShareList, Key? key}) : super(key: key);
 
   static const routeName = '/AddPhotoMemoScreen';
 
@@ -168,9 +170,21 @@ class _Controller {
 
       String docId = await FirestoreController.addPhotoMemo(photoMemo: tempMemo);
       tempMemo.docId = docId;
-      print('==================== docId: $docId');
-
+      //Add saved photo to existing photo list to present on home screen
       state.widget.photoMemoList.insert(0, tempMemo);
+
+      //Loop through sharedWith Array and add entry to viewedphoto_collection
+      for (int i = 0; i == tempMemo.sharedWith.length - 1; i++) {
+        ViewSharedPhoto sharedWith = ViewSharedPhoto();
+        sharedWith.dateShared = tempMemo.timestamp;
+        sharedWith.photoCollectionID = docId;
+        sharedWith.sharedWithEmail = tempMemo.sharedWith[i];
+        sharedWith.sharedBy = tempMemo.createdBy;
+        String shareDocID = await FirestoreController.addNewShareEntry(newShare: sharedWith);
+        sharedWith.docId = shareDocID;
+        state.widget.newShareList.insert(0, sharedWith);
+      }
+
       stopCircularProgress(state.context);
       Navigator.of(state.context).pop();  //Go back to home screen after saving image
     } catch (e) {

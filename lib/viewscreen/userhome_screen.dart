@@ -5,6 +5,7 @@ import 'package:termproject/controller/cloudstorage_controller.dart';
 import 'package:termproject/controller/firestore_controller.dart';
 import 'package:termproject/model/constant.dart';
 import 'package:termproject/model/photomemo.dart';
+import 'package:termproject/model/viewsharedphoto.dart';
 import 'package:termproject/viewscreen/addphotomemo_screen.dart';
 import 'package:termproject/viewscreen/detailedview_screen.dart';
 import 'package:termproject/viewscreen/sharedwith_screen.dart';
@@ -13,7 +14,10 @@ import 'package:termproject/viewscreen/view/webimage.dart';
 
 class UserHomeScreen extends StatefulWidget {
   const UserHomeScreen(
-      {required this.user, required this.photoMemoList, Key? key})
+      {required this.user,
+      required this.photoMemoList,
+      required this.newShares,
+      Key? key})
       : super(key: key);
 
   static const routeName = '/userHomeScreen';
@@ -21,6 +25,7 @@ class UserHomeScreen extends StatefulWidget {
   final User user;
   final List<PhotoMemo>
       photoMemoList; // These are point to the array in Firestore
+  final List<ViewSharedPhoto> newShares;
 
   @override
   State<StatefulWidget> createState() {
@@ -97,6 +102,9 @@ class _UserHomeState extends State<UserHomeScreen> {
               ListTile(
                 leading: const Icon(Icons.people),
                 title: const Text('Shared With'),
+                trailing: con.newSharedPhotos.isNotEmpty
+                    ? const Icon(Icons.star)
+                    : const Text(''),
                 onTap: con.sharedWith,
               ),
               ListTile(
@@ -157,11 +165,13 @@ class _UserHomeState extends State<UserHomeScreen> {
 class _Controller {
   _UserHomeState state;
   late List<PhotoMemo> photoMemoList;
+  late List<ViewSharedPhoto> newSharedPhotos;
   String? searchKeyString;
   List<int> selected = [];
 
   _Controller(this.state) {
     photoMemoList = state.widget.photoMemoList;
+    newSharedPhotos = state.widget.newShares;
   }
 
   void addButton() async {
@@ -169,6 +179,7 @@ class _Controller {
         arguments: {
           ArgKey.user: state.widget.user,
           ArgKey.photomemolist: photoMemoList,
+          ArgKey.newShareList: newSharedPhotos,
         });
 
     state.render(() {}); // render the screen even if photo memo was not added
@@ -285,13 +296,14 @@ class _Controller {
 
   void sharedWith() async {
     try {
-      List<PhotoMemo> photoMemoList = 
-          await FirestoreController.getPhotoMemoListSharedWithMe(email: state.email);
-      await Navigator.pushNamed(state.context, SharedWithScreen.routeName, 
-      arguments: {
-        ArgKey.photomemolist: photoMemoList,
-        ArgKey.user: state.widget.user,
-      });
+      List<PhotoMemo> photoMemoList =
+          await FirestoreController.getPhotoMemoListSharedWithMe(
+              email: state.email);
+      await Navigator.pushNamed(state.context, SharedWithScreen.routeName,
+          arguments: {
+            ArgKey.photomemolist: photoMemoList,
+            ArgKey.user: state.widget.user,
+          });
       Navigator.of(state.context).pop(); //push in the drawer
     } catch (e) {
       if (Constant.devMode) print('============= get Shared With Error $e');

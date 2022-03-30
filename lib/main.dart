@@ -38,7 +38,12 @@ class TermProject extends StatelessWidget {
             var arguments = args as Map;
             var user = arguments[ArgKey.user];
             var photoMemoList = arguments[ArgKey.photomemolist];
-            return UserHomeScreen(user: user, photoMemoList: photoMemoList,);
+            var newShareList = arguments[ArgKey.newShareList];
+            return UserHomeScreen(
+              user: user,
+              photoMemoList: photoMemoList,
+              newShares: newShareList,
+            );
           }
         },
         AddPhotoMemoScreen.routeName: (context) {
@@ -50,23 +55,32 @@ class TermProject extends StatelessWidget {
             var arguments = args as Map;
             var user = arguments[ArgKey.user];
             var photoMemoList = arguments[ArgKey.photomemolist];
-            return AddPhotoMemoScreen(user: user, photoMemoList: photoMemoList,);
+            var newShareList = arguments[ArgKey.newShareList];
+            return AddPhotoMemoScreen(
+              user: user,
+              photoMemoList: photoMemoList,
+              newShareList: newShareList,
+            );
           }
         },
         DetailedViewScreen.routeName: (context) {
           Object? args = ModalRoute.of(context)?.settings.arguments;
           if (args == null) {
-            return const ErrorScreen('args is null is for Detailed View Screen');
+            return const ErrorScreen(
+                'args is null is for Detailed View Screen');
           } else {
             //We need to convert args to a map to add the user object
             var arguments = args as Map;
             var user = arguments[ArgKey.user];
             var photoMemo = arguments[ArgKey.onePhotoMemo];
-            return DetailedViewScreen(user: user, photoMemo: photoMemo,);
+            return DetailedViewScreen(
+              user: user,
+              photoMemo: photoMemo,
+            );
           }
         },
         SignUpScreen.routeName: (context) => const SignUpScreen(),
-        SharedWithScreen.routeName:(context) {
+        SharedWithScreen.routeName: (context) {
           Object? args = ModalRoute.of(context)?.settings.arguments;
           if (args == null) {
             return const ErrorScreen('args is null is for Shared With Screen');
@@ -75,7 +89,10 @@ class TermProject extends StatelessWidget {
             var arguments = args as Map;
             var user = arguments[ArgKey.user];
             var photoMemoList = arguments[ArgKey.photomemolist];
-            return SharedWithScreen(user: user, photoMemoList: photoMemoList,);
+            return SharedWithScreen(
+              user: user,
+              photoMemoList: photoMemoList,
+            );
           }
         }
       },

@@ -4,6 +4,7 @@ import 'package:termproject/controller/auth_controller.dart';
 import 'package:termproject/controller/firestore_controller.dart';
 import 'package:termproject/model/constant.dart';
 import 'package:termproject/model/photomemo.dart';
+import 'package:termproject/model/viewsharedphoto.dart';
 import 'package:termproject/viewscreen/signup_screen.dart';
 import 'package:termproject/viewscreen/userhome_screen.dart';
 import 'package:termproject/viewscreen/view/view_util.dart';
@@ -107,15 +108,17 @@ class _Controller {
     try {
       if (email == null || password == null) {
         throw 'Email or Password is null';
-      }
-      print('Before sign in');
+      }      
       user = await AuthController.signIn(email: email!, password: password!);
-      print('after sign in');
       //Before navigating to user home get list of photos
-      print('before photo list sign in');
       List<PhotoMemo> photoMemoList =
           await FirestoreController.getPhotoMemoList(email: email!);
-      print('after photo list sign in');
+      print("************** Got Photomemos ***********");
+
+      print("************** Get ViewSharedPhotos ***********");
+      List<ViewSharedPhoto> newShares = 
+          await FirestoreController.getNewPhotoShares(email: email!);
+      print('########## Retrived ViewSharedPhotos ##############');
       stopCircularProgress(state.context);
 
       Navigator.pushNamed(
@@ -127,6 +130,7 @@ class _Controller {
           ArgKey.user: user,
           ArgKey.photomemolist:
               photoMemoList, //These are just point to the array list
+          ArgKey.newShareList: newShares,
         },
       );
     } catch (e) {

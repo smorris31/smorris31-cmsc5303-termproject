@@ -1,14 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../model/constant.dart';
-import '../model/photomemo.dart';
+import 'package:termproject/model/viewsharedphoto.dart';
+import 'package:termproject/model/constant.dart';
+import 'package:termproject/model/photomemo.dart';
 
 class FirestoreController {
+
   static Future<String> addPhotoMemo({
     required PhotoMemo photoMemo,
   }) async {
     DocumentReference ref = await FirebaseFirestore.instance
         .collection(Constant.photoMemoCollection)
         .add(photoMemo.toFirestoreDoc());
+    return ref.id;
+  }
+
+  static Future<String> addNewShareEntry({
+    required ViewSharedPhoto newShare,
+  }) async {
+    DocumentReference ref = await FirebaseFirestore.instance
+        .collection(Constant.viewedSharedPhotoCollection)
+        .add(newShare.toFirestoreDoc());
     return ref.id;
   }
 
@@ -29,6 +40,29 @@ class FirestoreController {
         if (p != null) result.add(p);
       }
     }
+    return result;
+  }
+
+  static Future<List<ViewSharedPhoto>> getNewPhotoShares({
+    required String email,
+  }) async {
+    print('**********Query Viewed Shared ***********');
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(Constant.viewedSharedPhotoCollection)
+        .where(DocKeyViewedPhotoMemo.sharedWithEmail.name, isEqualTo: email)
+        .where(DocKeyViewedPhotoMemo.viewed.name, isEqualTo: false)
+        .orderBy(DocKeyViewedPhotoMemo.dateShared.name, descending: true)
+        .get();
+
+    var result = <ViewSharedPhoto>[];
+    for (var doc in querySnapshot.docs) {
+      if (doc.data() != null) {
+        var document = doc.data() as Map<String, dynamic>;
+        var p = ViewSharedPhoto.fromFirestoreDoc(doc: document, docId: doc.id);
+        if (p != null) result.add(p);
+      }
+    }
+    print('******* found results **********');
     return result;
   }
 
