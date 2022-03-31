@@ -4,6 +4,7 @@ import 'package:termproject/controller/auth_controller.dart';
 import 'package:termproject/controller/cloudstorage_controller.dart';
 import 'package:termproject/controller/firestore_controller.dart';
 import 'package:termproject/model/constant.dart';
+import 'package:termproject/model/photolikedislike.dart';
 import 'package:termproject/model/photomemo.dart';
 import 'package:termproject/model/viewsharedphoto.dart';
 import 'package:termproject/viewscreen/addphotomemo_screen.dart';
@@ -17,6 +18,7 @@ class UserHomeScreen extends StatefulWidget {
       {required this.user,
       required this.photoMemoList,
       required this.newShares,
+      required this.likedislike,
       Key? key})
       : super(key: key);
 
@@ -26,6 +28,7 @@ class UserHomeScreen extends StatefulWidget {
   final List<PhotoMemo>
       photoMemoList; // These are point to the array in Firestore
   final List<ViewSharedPhoto> newShares;
+  final List<PhotoLikeDislike> likedislike;
 
   @override
   State<StatefulWidget> createState() {
@@ -170,12 +173,14 @@ class _Controller {
   _UserHomeState state;
   late List<PhotoMemo> photoMemoList;
   late List<ViewSharedPhoto> newSharedPhotos;
+  late List<PhotoLikeDislike> likedislike;
   String? searchKeyString;
   List<int> selected = [];
 
   _Controller(this.state) {
     photoMemoList = state.widget.photoMemoList;
     newSharedPhotos = state.widget.newShares;
+    likedislike = state.widget.likedislike;
   }
 
   void addButton() async {
@@ -308,6 +313,7 @@ class _Controller {
             ArgKey.photomemolist: photoMemoList,
             ArgKey.user: state.widget.user,
             ArgKey.newShareList: newSharedPhotos,
+            ArgKey.likedislike: likedislike,
           });
       state.render(() {
         newSharedPhotos.clear();

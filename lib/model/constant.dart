@@ -8,5 +8,5 @@ class Constant {
 }
 
 enum ArgKey {
-  user,  downloadURL,  filename, photomemolist, onePhotoMemo, newShareList
+  user,  downloadURL,  filename, photomemolist, onePhotoMemo, newShareList, likedislike,
 }

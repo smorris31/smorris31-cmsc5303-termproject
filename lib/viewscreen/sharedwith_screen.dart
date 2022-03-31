@@ -12,11 +12,13 @@ class SharedWithScreen extends StatefulWidget {
       {required this.photoMemoList,
       required this.user,
       required this.newShares,
+      required this.likedislike,
       Key? key})
       : super(key: key);
 
   final List<PhotoMemo> photoMemoList;
   final List<ViewSharedPhoto> newShares;
+  final List<PhotoLikeDislike> likedislike;
   final User user;
 
   static const routeName = '/sharedwithscreen';
@@ -36,6 +38,8 @@ class _SharedWithState extends State<SharedWithScreen> {
     con = _Controller(this);
     con.updateViewPhotoCollection();
   }
+
+  void render(fn) => setState(fn);
 
   @override
   Widget build(BuildContext context) {
@@ -85,22 +89,37 @@ class _SharedWithState extends State<SharedWithScreen> {
                               children: [
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    IconButton(
-                                      onPressed: () =>
-                                          con.likePhotoMemo(photoMemo),
-                                      icon: const Icon(Icons.thumb_up),
-                                    ),
-                                  ],
+                                  // ignore: iterable_contains_unrelated_type
+                                  children: widget.likedislike.where(
+                                          (element) =>
+                                              element.photoCollectionID ==
+                                              photoMemo.docId).isEmpty
+                                      ? [
+                                          IconButton(
+                                            onPressed: () =>
+                                                con.likePhotoMemo(photoMemo),
+                                            icon: const Icon(Icons.thumb_up, color: Colors.blue,),
+                                          ),
+                                        ]
+                                      : [
+                                          const Icon(Icons.thumb_up, color: Colors.red,),                                          
+                                        ],
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
+                                  // ignore: iterable_contains_unrelated_type
+                                  children: widget.likedislike.where(
+                                          (element) =>
+                                              element.photoCollectionID ==
+                                              photoMemo.docId).isEmpty
+                                      ? [
                                     IconButton(
                                       onPressed: () =>
                                           con.dislikePhotoMemo(photoMemo),
-                                      icon: const Icon(Icons.thumb_down),
+                                      icon: const Icon(Icons.thumb_down, color: Colors.blue,),
                                     ),
+                                  ] : [
+                                    const Icon(Icons.thumb_down, color: Colors.red,),
                                   ],
                                 ),
                               ],
@@ -131,14 +150,17 @@ class _Controller {
     }
   }
 
-  void likePhotoMemo(PhotoMemo photoMemo) async {
+  void likePhotoMemo(PhotoMemo photoMemo) async {    
     PhotoLikeDislike photoLikeDislike = PhotoLikeDislike();
     photoLikeDislike.photoCollectionID = photoMemo.docId!;
     photoLikeDislike.reviewerEmail = state.widget.user.email!;
     photoLikeDislike.like = 1;
     photoLikeDislike.dateReviewed = DateTime.now();
-    String docId = await FirestoreController.addPhotoLikesDislikes(photoLikeDislike: photoLikeDislike);
+    String docId = await FirestoreController.addPhotoLikesDislikes(
+        photoLikeDislike: photoLikeDislike);
     photoLikeDislike.docId = docId;
+    state.widget.likedislike.add(photoLikeDislike);
+    state.render(() {});
   }
 
   void dislikePhotoMemo(PhotoMemo photoMemo) async {
@@ -147,7 +169,10 @@ class _Controller {
     photoLikeDislike.reviewerEmail = state.widget.user.email!;
     photoLikeDislike.dislike = 1;
     photoLikeDislike.dateReviewed = DateTime.now();
-    String docId = await FirestoreController.addPhotoLikesDislikes(photoLikeDislike: photoLikeDislike);
+    String docId = await FirestoreController.addPhotoLikesDislikes(
+        photoLikeDislike: photoLikeDislike);
     photoLikeDislike.docId = docId;
+    state.widget.likedislike.add(photoLikeDislike);    
+    state.render(() {});
   }
 }

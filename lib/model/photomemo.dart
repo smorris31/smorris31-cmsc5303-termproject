@@ -1,3 +1,4 @@
+
 enum PhotoSource { camera, gallery }
 
 enum DocKeyPhotoMemo {
@@ -125,6 +126,14 @@ class PhotoMemo {
     return (value == null || value.trim().length < 3)
         ? 'Title too short'
         : null;
+  }
+
+  void addLike(int? value) {
+    value != null ? like += value : like += 0;
+  }
+
+  void addDislike(int? value) {
+    value != null ? dislike += value : dislike += 0;
   }
 
   static String? validateMemo(String? value) {

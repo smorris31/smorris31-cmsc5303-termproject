@@ -174,7 +174,7 @@ class _Controller {
       state.widget.photoMemoList.insert(0, tempMemo);
 
       //Loop through sharedWith Array and add entry to viewedphoto_collection
-      for (int i = 0; i == tempMemo.sharedWith.length - 1; i++) {
+      for (int i = 0; i <= tempMemo.sharedWith.length - 1; i++) {
         ViewSharedPhoto sharedWith = ViewSharedPhoto();
         sharedWith.dateShared = tempMemo.timestamp;
         sharedWith.photoCollectionID = docId;

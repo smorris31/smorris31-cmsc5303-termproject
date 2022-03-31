@@ -39,10 +39,12 @@ class TermProject extends StatelessWidget {
             var user = arguments[ArgKey.user];
             var photoMemoList = arguments[ArgKey.photomemolist];
             var newShareList = arguments[ArgKey.newShareList];
+            var likedislike = arguments[ArgKey.likedislike];
             return UserHomeScreen(
               user: user,
               photoMemoList: photoMemoList,
               newShares: newShareList,
+              likedislike: likedislike,
             );
           }
         },
@@ -90,10 +92,12 @@ class TermProject extends StatelessWidget {
             var user = arguments[ArgKey.user];
             var photoMemoList = arguments[ArgKey.photomemolist];
             var newShareList = arguments[ArgKey.newShareList];
+            var likedislike = arguments[ArgKey.likedislike]; 
             return SharedWithScreen(
               user: user,
               photoMemoList: photoMemoList,
               newShares: newShareList,
+              likedislike: likedislike,
             );
           }
         }

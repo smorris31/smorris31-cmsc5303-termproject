@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:termproject/model/photolikedislike.dart';
 import 'package:termproject/model/viewsharedphoto.dart';
 import 'package:termproject/model/constant.dart';
@@ -47,11 +46,31 @@ class FirestoreController {
     for (var doc in querySnapshot.docs) {
       if (doc.data() != null) {
         var document = doc.data() as Map<String, dynamic>;
-        var p = PhotoMemo.fromFirestoreDoc(doc: document, docId: doc.id);
+        var p = PhotoMemo.fromFirestoreDoc(doc: document, docId: doc.id); 
         if (p != null) result.add(p);
       }
     }
     return result;
+  }
+
+  static Future<List<PhotoLikeDislike>> getPhotoMemoLikesDislikes({
+    required String photoCollectionID,
+  }) async {
+      QuerySnapshot likedislike = await FirebaseFirestore.instance
+          .collection(Constant.photoLikeDislike)
+          .where(DocKeyLikeDislikePhoto.photoCollectionID.name, isEqualTo: photoCollectionID)
+          .orderBy(DocKeyLikeDislikePhoto.reviewerEmail.name, descending: true)
+          .get();
+      
+      var result = <PhotoLikeDislike>[];
+      for (var doc in likedislike.docs) {
+        if (doc.data() != null) {
+          var document = doc.data() as Map<String, dynamic>;
+          var ld = PhotoLikeDislike.fromFirestoreDoc(doc: document, docId: doc.id);
+          if (ld != null) result.add(ld);
+        }
+      }
+      return result;
   }
 
   static Future<List<ViewSharedPhoto>> getNewPhotoShares({

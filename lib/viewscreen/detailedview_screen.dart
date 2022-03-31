@@ -223,9 +223,9 @@ class _Controller {
       }
       if (!listEquals(tempMemo.sharedWith, state.widget.photoMemo.sharedWith)) {
         update[DocKeyPhotoMemo.sharedWith.name] = tempMemo.sharedWith;
-        for (int i = 0; i == tempMemo.sharedWith.length - 1; i++) {
+        for (int i = 0; i <= tempMemo.sharedWith.length - 1; i++) {
           ViewSharedPhoto sharedWith = ViewSharedPhoto();
-          sharedWith.dateShared = tempMemo.timestamp;
+          sharedWith.dateShared = DateTime.now();
           sharedWith.photoCollectionID = tempMemo.docId!;
           sharedWith.sharedWithEmail = tempMemo.sharedWith[i];
           sharedWith.sharedBy = tempMemo.createdBy;

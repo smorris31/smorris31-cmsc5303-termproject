@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:termproject/controller/auth_controller.dart';
 import 'package:termproject/controller/firestore_controller.dart';
 import 'package:termproject/model/constant.dart';
+import 'package:termproject/model/photolikedislike.dart';
 import 'package:termproject/model/photomemo.dart';
 import 'package:termproject/model/viewsharedphoto.dart';
 import 'package:termproject/viewscreen/signup_screen.dart';
@@ -115,6 +116,19 @@ class _Controller {
           await FirestoreController.getPhotoMemoList(email: email!);
       List<ViewSharedPhoto> newShares = 
           await FirestoreController.getNewPhotoShares(email: email!);
+      var likedislikeList = <PhotoLikeDislike>[];
+      for (var p in photoMemoList) {
+        List<PhotoLikeDislike> likedislike = 
+          await FirestoreController.getPhotoMemoLikesDislikes(photoCollectionID:  p.docId!);
+        
+        if (likedislike.isNotEmpty) {
+          for (var ld in likedislike) {
+            p.addDislike(ld.dislike);
+            p.addLike(ld.like);
+            likedislikeList.add(ld);
+          }
+        }
+      }
       stopCircularProgress(state.context);
 
       Navigator.pushNamed(
@@ -127,6 +141,7 @@ class _Controller {
           ArgKey.photomemolist:
               photoMemoList, //These are just point to the array list
           ArgKey.newShareList: newShares,
+          ArgKey.likedislike: likedislikeList,
         },
       );
     } catch (e) {
