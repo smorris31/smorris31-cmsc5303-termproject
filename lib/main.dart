@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:termproject/viewscreen/addeditdeletephotocomment_screen.dart';
 import 'package:termproject/viewscreen/addphotomemo_screen.dart';
 import 'package:termproject/viewscreen/detailedview_screen.dart';
 import 'package:termproject/viewscreen/error_screen.dart';
@@ -76,6 +77,20 @@ class TermProject extends StatelessWidget {
             var user = arguments[ArgKey.user];
             var photoMemo = arguments[ArgKey.onePhotoMemo];
             return DetailedViewScreen(
+              user: user,
+              photoMemo: photoMemo,
+            );
+          }
+        },
+        AddEditDeletePhotoCommentScreen.routeName: (context) {
+          Object? args = ModalRoute.of(context)?.settings.arguments;
+          if (args == null) {
+            return const ErrorScreen('args is null is for Add/Edit/Delete Screen');
+          } else {
+            var arguments = args as Map;
+            var user = arguments[ArgKey.user];
+            var photoMemo = arguments[ArgKey.onePhotoMemo];
+            return AddEditDeletePhotoCommentScreen(
               user: user,
               photoMemo: photoMemo,
             );

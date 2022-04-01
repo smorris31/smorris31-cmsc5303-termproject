@@ -121,6 +121,7 @@ class _AddPhotoMemoState extends State<AddPhotoMemoScreen> {
                 maxLines: 2,
                 validator: PhotoMemo.validateSharedWith,
                 onSaved: con.saveSharedWith,
+                
               ),
             ],
           ),

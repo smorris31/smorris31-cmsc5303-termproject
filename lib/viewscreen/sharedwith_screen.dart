@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:termproject/controller/firestore_controller.dart';
 import 'package:termproject/model/photolikedislike.dart';
 import 'package:termproject/model/viewsharedphoto.dart';
+import 'package:termproject/viewscreen/addeditdeletephotocomment_screen.dart';
 import 'package:termproject/viewscreen/view/webimage.dart';
 import '../model/photomemo.dart';
 import '../model/constant.dart';
@@ -30,6 +31,7 @@ class SharedWithScreen extends StatefulWidget {
 
 class _SharedWithState extends State<SharedWithScreen> {
   late _Controller con;
+  bool editMode = false;
   var formKey = GlobalKey<FormState>();
 
   @override
@@ -90,37 +92,56 @@ class _SharedWithState extends State<SharedWithScreen> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   // ignore: iterable_contains_unrelated_type
-                                  children: widget.likedislike.where(
-                                          (element) =>
+                                  children: widget.likedislike
+                                          .where((element) =>
                                               element.photoCollectionID ==
-                                              photoMemo.docId).isEmpty
+                                              photoMemo.docId)
+                                          .isEmpty
                                       ? [
                                           IconButton(
                                             onPressed: () =>
                                                 con.likePhotoMemo(photoMemo),
-                                            icon: const Icon(Icons.thumb_up, color: Colors.blue,),
+                                            icon: const Icon(
+                                              Icons.thumb_up,
+                                              color: Colors.blue,
+                                            ),
                                           ),
                                         ]
                                       : [
-                                          const Icon(Icons.thumb_up, color: Colors.red,),                                          
+                                          const Icon(
+                                            Icons.thumb_up,
+                                            color: Colors.red,
+                                          ),
                                         ],
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   // ignore: iterable_contains_unrelated_type
-                                  children: widget.likedislike.where(
-                                          (element) =>
+                                  children: widget.likedislike
+                                          .where((element) =>
                                               element.photoCollectionID ==
-                                              photoMemo.docId).isEmpty
+                                              photoMemo.docId)
+                                          .isEmpty
                                       ? [
-                                    IconButton(
-                                      onPressed: () =>
-                                          con.dislikePhotoMemo(photoMemo),
-                                      icon: const Icon(Icons.thumb_down, color: Colors.blue,),
-                                    ),
-                                  ] : [
-                                    const Icon(Icons.thumb_down, color: Colors.red,),
-                                  ],
+                                          IconButton(
+                                            onPressed: () =>
+                                                con.dislikePhotoMemo(photoMemo),
+                                            icon: const Icon(
+                                              Icons.thumb_down,
+                                              color: Colors.blue,
+                                            ),
+                                          ),
+                                        ]
+                                      : [
+                                          const Icon(
+                                            Icons.thumb_down,
+                                            color: Colors.red,
+                                          ),
+                                        ],
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => con.comment(photoMemo),
+                                  child: const Text('Comment'),                                  
                                 ),
                               ],
                             ),
@@ -150,7 +171,7 @@ class _Controller {
     }
   }
 
-  void likePhotoMemo(PhotoMemo photoMemo) async {    
+  void likePhotoMemo(PhotoMemo photoMemo) async {
     PhotoLikeDislike photoLikeDislike = PhotoLikeDislike();
     photoLikeDislike.photoCollectionID = photoMemo.docId!;
     photoLikeDislike.reviewerEmail = state.widget.user.email!;
@@ -172,7 +193,18 @@ class _Controller {
     String docId = await FirestoreController.addPhotoLikesDislikes(
         photoLikeDislike: photoLikeDislike);
     photoLikeDislike.docId = docId;
-    state.widget.likedislike.add(photoLikeDislike);    
+    state.widget.likedislike.add(photoLikeDislike);
     state.render(() {});
+  }
+
+  void comment(PhotoMemo photoMemo) async {
+    //Navigate to photocomment
+    await Navigator.pushNamed(state.context, AddEditDeletePhotoCommentScreen.routeName,
+        arguments: {
+          ArgKey.user: state.widget.user,
+          ArgKey.onePhotoMemo: photoMemo,
+        });
+
+    state.render(() {}); // render the screen even if photo memo was not added
   }
 }

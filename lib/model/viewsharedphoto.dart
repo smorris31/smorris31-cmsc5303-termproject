@@ -27,6 +27,7 @@ class ViewSharedPhoto{
     this.dateViewed,
     this.sharedWithEmail = '',
   });
+  
   void copyFrom(ViewSharedPhoto p) {
     docId = p.docId;
     photoCollectionID = p.photoCollectionID;
