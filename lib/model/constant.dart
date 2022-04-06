@@ -1,4 +1,3 @@
-
 class Constant {
   static const devMode = true;
   static const photoFileFolder = 'photo_files';
@@ -9,5 +8,13 @@ class Constant {
 }
 
 enum ArgKey {
-  user,  downloadURL,  filename, photomemolist, onePhotoMemo, newShareList, likedislike, photoComments,
+  user,
+  downloadURL,
+  filename,
+  photomemolist,
+  onePhotoMemo,
+  newShareList,
+  likedislike,
+  photoComments,
+  onePhotoComment,
 }

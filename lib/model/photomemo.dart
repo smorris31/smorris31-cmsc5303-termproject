@@ -13,6 +13,7 @@ enum DocKeyPhotoMemo {
   like,
   dislike,
   commentsAdded,
+  comments,
 }
 
 class PhotoMemo {
@@ -30,6 +31,7 @@ class PhotoMemo {
   late int like;
   late int dislike;
   late bool commentsAdded;
+  late List<dynamic> comments;
 
   //Constructor
   PhotoMemo({
@@ -45,9 +47,11 @@ class PhotoMemo {
     this.like = 0,
     this.dislike = 0,
     this.commentsAdded = false,
+    List<dynamic>? comments,
   }) {
     this.imageLabels = imageLabels == null ? [] : [...imageLabels];
     this.sharedWith = sharedWith == null ? [] : [...sharedWith];
+    this.comments = comments == null ? [] : [...comments];
   }
 
   //Method to return a cloned copy of the object
@@ -65,6 +69,7 @@ class PhotoMemo {
     like = p.like;
     dislike = p.dislike;
     commentsAdded = p.commentsAdded;
+    comments = [...p.comments];
   }
 
   //Copy form a.copyFrom(b) ==> a = b
@@ -85,6 +90,8 @@ class PhotoMemo {
     like = p.like;
     dislike = p.dislike;
     commentsAdded = p.commentsAdded;
+    comments.clear();
+    comments.addAll(p.comments);
   }
 
   //serialization
@@ -101,6 +108,7 @@ class PhotoMemo {
       DocKeyPhotoMemo.like.name: like,
       DocKeyPhotoMemo.dislike.name: dislike,
       DocKeyPhotoMemo.commentsAdded.name: commentsAdded,
+      DocKeyPhotoMemo.comments.name: comments,
     };
   }
 
@@ -126,6 +134,7 @@ class PhotoMemo {
       like: doc[DocKeyPhotoMemo.like.name] ??= 0,
       dislike: doc[DocKeyPhotoMemo.dislike.name] ??= 0,
       commentsAdded: doc[DocKeyPhotoMemo.commentsAdded.name] ??= false,
+      comments: doc[DocKeyPhotoMemo.comments.name] ??= [],
     );
   }
 
@@ -160,9 +169,5 @@ class PhotoMemo {
       }
     }
     return null;
-  }
-
-  static String? validateComment(String? value) {
-    return (value == null || value.trim().length < 3) ? 'Comment is too short' : null;
   }
 }

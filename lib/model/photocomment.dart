@@ -73,4 +73,8 @@ class PhotoComment {
       read: doc[DocKeyPhotoComments.read.name] ??= false,
     );
   }
+
+  static String? validateComment(String? value) {
+    return (value == null || value.trim().length < 3) ? 'Comment is too short' : null;
+  }
 }

@@ -90,9 +90,11 @@ class TermProject extends StatelessWidget {
             var arguments = args as Map;
             var user = arguments[ArgKey.user];
             var photoMemo = arguments[ArgKey.onePhotoMemo];
+            var onePhotoComment = arguments[ArgKey.onePhotoComment];
             return AddEditDeletePhotoCommentScreen(
               user: user,
               photoMemo: photoMemo,
+              photoComment: onePhotoComment,
             );
           }
         },

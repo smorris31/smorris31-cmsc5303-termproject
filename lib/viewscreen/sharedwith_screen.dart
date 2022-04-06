@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:termproject/controller/firestore_controller.dart';
+import 'package:termproject/model/photocomment.dart';
 import 'package:termproject/model/photolikedislike.dart';
 import 'package:termproject/model/viewsharedphoto.dart';
 import 'package:termproject/viewscreen/addeditdeletephotocomment_screen.dart';
@@ -158,7 +159,7 @@ class _SharedWithState extends State<SharedWithScreen> {
 
 class _Controller {
   _SharedWithState state;
-  late PhotoMemo tempMemo;
+  PhotoComment tempComment = PhotoComment();
   _Controller(this.state);
 
   void updateViewPhotoCollection() async {
@@ -203,6 +204,7 @@ class _Controller {
         arguments: {
           ArgKey.user: state.widget.user,
           ArgKey.onePhotoMemo: photoMemo,
+          ArgKey.onePhotoComment: tempComment,
         });
 
     state.render(() {}); // render the screen even if photo memo was not added
