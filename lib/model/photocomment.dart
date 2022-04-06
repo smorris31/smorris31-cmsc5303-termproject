@@ -2,7 +2,7 @@ enum DocKeyPhotoComments {
   docId,
   createdBy,
   photoCollectionID,
-  commment,
+  comment,
   createDate,
   dateRead,
   read
@@ -25,7 +25,18 @@ class PhotoComment {
     this.createDate,
     this.dateRead,
     this.read = false,
+
   });
+
+  PhotoComment.clone(PhotoComment c) {
+    docId = c.docId;
+    createdBy = c.createdBy;
+    photoCollectionID = c.photoCollectionID;
+    comment = c.comment;
+    createDate = c.createDate;
+    dateRead = c.dateRead;
+    read = c.read;
+  }
 
   void copyFrom(PhotoComment c) {
     docId = c.docId;
@@ -42,7 +53,7 @@ class PhotoComment {
     return {
       DocKeyPhotoComments.createdBy.name: createdBy,
       DocKeyPhotoComments.photoCollectionID.name: photoCollectionID,
-      DocKeyPhotoComments.commment.name: comment,
+      DocKeyPhotoComments.comment.name: comment,
       DocKeyPhotoComments.createDate.name: createDate,
       DocKeyPhotoComments.dateRead.name: dateRead,
       DocKeyPhotoComments.read.name: read,
@@ -59,7 +70,7 @@ class PhotoComment {
       createdBy: doc[DocKeyPhotoComments.createdBy.name] ??= 'N/A',
       photoCollectionID: doc[DocKeyPhotoComments.photoCollectionID.name] ??=
           'N/A',
-      comment: doc[DocKeyPhotoComments.commment.name] ??='N/A',
+      comment: doc[DocKeyPhotoComments.comment.name] ??='N/A',
       createDate: doc[DocKeyPhotoComments.createDate.name] != null
           ? DateTime.fromMillisecondsSinceEpoch(
               doc[DocKeyPhotoComments.createDate.name].millisecondsSinceEpoch,

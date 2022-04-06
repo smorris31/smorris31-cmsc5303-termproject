@@ -30,12 +30,14 @@ class _AddEditDeleteCommentState
     extends State<AddEditDeletePhotoCommentScreen> {
   late _Controller con;
   bool editMode = false;
+  late bool updatable;
   var formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     con = _Controller(this);
+    updatable = con.tempComment.comment.isNotEmpty ? true : false;
   }
 
   void render(fn) => setState(fn);
@@ -122,8 +124,7 @@ class _AddEditDeleteCommentState
                 decoration: const InputDecoration(
                   hintText: 'Enter Comments...',
                 ),
-                //initialValue: con.tempComment.comment,
-                initialValue: '',
+                initialValue: con.tempComment.comment,
                 keyboardType: TextInputType.multiline,
                 maxLines: 6,
                 validator: PhotoComment.validateComment,
@@ -150,8 +151,8 @@ class _Controller {
   ////Assign state object
   _Controller(this.state) {
     //use the photoMemo sent to this screen to make the clone
-    tempMemo = PhotoMemo.clone(state.widget.photoMemo);
-    //tempComment = PhotoComment.clone
+    tempMemo = state.widget.photoMemo;
+    tempComment = PhotoComment.clone(state.widget.photoComment);
   }
 
   void update() async {
@@ -164,18 +165,42 @@ class _Controller {
     startCircularProgress(state.context);
 
     try {
-      Map<String, dynamic> update = {};
-      //Update firestore comment
-      if (update.isNotEmpty) {
-        //change has been made
-        tempMemo.timestamp = DateTime.now();
-        update[DocKeyPhotoMemo.timestamp.name] = tempMemo.timestamp;
-        await FirestoreController.updatePhotoMemo(
-            docId: tempMemo.docId!, update: update);
-
-        //We not need to update the original
-        state.widget.photoMemo.copyFrom(tempMemo);
+      if (!state.updatable) {
+        //This means there is not a comment yet
+        tempComment.createDate = DateTime.now();
+        tempComment.createdBy = state.widget.user.email!;
+        tempComment.photoCollectionID = tempMemo.docId!;
+        var id = await FirestoreController.addPhotoComment(
+            photoComment: tempComment);
+        tempComment.docId = id;
+        state.widget.photoComment.copyFrom(tempComment);
+      } else {
+        print('*********************** Editable*****************');
+        Map<String, dynamic> update = {};
+        Map<String, dynamic> updatePhotoMemo = {};
+        //Update firestore comment
+        print(state.widget.photoComment.comment);
+        print(tempComment.comment);
+        if (tempComment.comment != state.widget.photoComment.comment) {
+          update[DocKeyPhotoComments.comment.name] = tempComment.comment;
+        }
+        if (update.isNotEmpty) {
+          //change has been made
+          tempComment.createDate = DateTime.now();
+          update[DocKeyPhotoComments.createDate.name] = tempMemo.timestamp;
+          tempMemo.commentsAdded = true;
+          updatePhotoMemo[DocKeyPhotoMemo.commentsAdded.name] =
+              tempMemo.commentsAdded;
+          await FirestoreController.updatePhotoMemo(
+              docId: tempMemo.docId!, update: updatePhotoMemo);
+          //We not need to update the original
+          state.widget.photoMemo.copyFrom(tempMemo);
+          await FirestoreController.updatePhotoComment(
+              docId: tempComment.docId!, update: update);
+          state.widget.photoComment.copyFrom(tempComment);
+        }
       }
+
       stopCircularProgress(state.context);
       state.render(() => state.editMode = false);
     } catch (e) {
@@ -194,5 +219,9 @@ class _Controller {
 
   void delete() {}
 
-  void saveComment(String? value) {}
+  void saveComment(String? value) {
+    if (value != null) {
+      tempComment.comment = value;
+    }
+  }
 }

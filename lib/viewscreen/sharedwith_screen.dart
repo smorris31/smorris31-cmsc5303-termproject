@@ -142,7 +142,7 @@ class _SharedWithState extends State<SharedWithScreen> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () => con.comment(photoMemo),
-                                  child: const Text('Comment'),                                  
+                                  child: const Text('Comment'),
                                 ),
                               ],
                             ),
@@ -159,7 +159,7 @@ class _SharedWithState extends State<SharedWithScreen> {
 
 class _Controller {
   _SharedWithState state;
-  PhotoComment tempComment = PhotoComment();
+  late PhotoComment tempComment;
   _Controller(this.state);
 
   void updateViewPhotoCollection() async {
@@ -200,7 +200,10 @@ class _Controller {
 
   void comment(PhotoMemo photoMemo) async {
     //Navigate to photocomment
-    await Navigator.pushNamed(state.context, AddEditDeletePhotoCommentScreen.routeName,
+    tempComment = await FirestoreController.getPhotoCommentByUser(
+        email: state.widget.user.email!, photoCollectionID: photoMemo.docId!);
+    await Navigator.pushNamed(
+        state.context, AddEditDeletePhotoCommentScreen.routeName,
         arguments: {
           ArgKey.user: state.widget.user,
           ArgKey.onePhotoMemo: photoMemo,
