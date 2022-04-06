@@ -139,7 +139,19 @@ class _UserHomeState extends State<UserHomeScreen> {
                       context: context,
                     ),
                     title: Text(con.photoMemoList[index].title),
-                    trailing: const Icon(Icons.arrow_right),
+                    trailing: Column(
+                      children: [
+                        con.photoMemoList[index].commentsAdded
+                            ? const Icon(
+                                Icons.star,
+                                color: Colors.red,
+                              )
+                            : const SizedBox(
+                                height: 1.0,
+                              ),
+                        const Icon(Icons.arrow_right),
+                      ],
+                    ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -153,10 +165,8 @@ class _UserHomeState extends State<UserHomeScreen> {
                             'Shared With: ${con.photoMemoList[index].sharedWith}'),
                         Text(
                             'Timestamp: ${con.photoMemoList[index].timestamp}'),
-                        Text(
-                            'Likes: ${con.photoMemoList[index].like}'),
-                        Text(
-                            'Dislikes: ${con.photoMemoList[index].dislike}'),
+                        Text('Likes: ${con.photoMemoList[index].like}'),
+                        Text('Dislikes: ${con.photoMemoList[index].dislike}'),
                       ],
                     ),
                     onTap: () => con.detailedView(index),

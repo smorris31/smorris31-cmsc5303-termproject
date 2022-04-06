@@ -166,6 +166,7 @@ class _Controller {
 
     try {
       if (!state.updatable) {
+        Map<String, dynamic> updatePhotoMemo = {};
         //This means there is not a comment yet
         tempComment.createDate = DateTime.now();
         tempComment.createdBy = state.widget.user.email!;
@@ -174,6 +175,15 @@ class _Controller {
             photoComment: tempComment);
         tempComment.docId = id;
         state.widget.photoComment.copyFrom(tempComment);
+
+        
+        tempMemo.commentsAdded = true;
+        updatePhotoMemo[DocKeyPhotoMemo.commentsAdded.name] =
+            tempMemo.commentsAdded;
+        await FirestoreController.updatePhotoMemo(
+            docId: tempMemo.docId!, update: updatePhotoMemo);
+        //We not need to update the original
+        state.widget.photoMemo.copyFrom(tempMemo);
       } else {
         print('*********************** Editable*****************');
         Map<String, dynamic> update = {};
