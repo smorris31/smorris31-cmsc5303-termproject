@@ -84,6 +84,28 @@ class FirestoreController {
     return result;
   }
 
+   static Future<List<PhotoComment>> getPhotoMemoComments({
+    required String photoCollectionID,
+  }) async {
+    QuerySnapshot comments = await FirebaseFirestore.instance
+        .collection(Constant.photoComments)
+        .where(DocKeyPhotoComments.photoCollectionID.name,
+            isEqualTo: photoCollectionID)
+        .orderBy(DocKeyPhotoComments.createdBy.name, descending: true)
+        .get();
+
+    var result = <PhotoComment>[];
+    for (var doc in comments.docs) {
+      if (doc.data() != null) {
+        var document = doc.data() as Map<String, dynamic>;
+        var c =
+            PhotoComment.fromFirestoreDoc(doc: document, docId: doc.id);
+        if (c != null) result.add(c);
+      }
+    }
+    return result;
+  }
+
   static Future<PhotoComment> getPhotoCommentByUser({
     required String email,
     required String photoCollectionID,

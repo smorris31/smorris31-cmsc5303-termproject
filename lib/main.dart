@@ -76,9 +76,11 @@ class TermProject extends StatelessWidget {
             var arguments = args as Map;
             var user = arguments[ArgKey.user];
             var photoMemo = arguments[ArgKey.onePhotoMemo];
+            var photoComments = arguments[ArgKey.photoComments];
             return DetailedViewScreen(
               user: user,
               photoMemo: photoMemo,
+              photoComments: photoComments,
             );
           }
         },

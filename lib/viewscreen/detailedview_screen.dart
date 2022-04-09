@@ -8,6 +8,7 @@ import 'package:termproject/controller/cloudstorage_controller.dart';
 import 'package:termproject/controller/firestore_controller.dart';
 import 'package:termproject/controller/ml_controller.dart';
 import 'package:termproject/model/constant.dart';
+import 'package:termproject/model/photocomment.dart';
 import 'package:termproject/model/viewsharedphoto.dart';
 import 'package:termproject/viewscreen/view/view_util.dart';
 import 'package:termproject/viewscreen/view/webimage.dart';
@@ -25,9 +26,10 @@ class DetailedViewScreen extends StatefulWidget {
    * and then copy contents back to the original using a copy from
    */
   final PhotoMemo photoMemo;
+  final PhotoComment photoComments;
 
   const DetailedViewScreen(
-      {required this.user, required this.photoMemo, Key? key})
+      {required this.user, required this.photoMemo, required this.photoComments, Key? key})
       : super(key: key);
 
   @override

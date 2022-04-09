@@ -4,6 +4,7 @@ import 'package:termproject/controller/auth_controller.dart';
 import 'package:termproject/controller/cloudstorage_controller.dart';
 import 'package:termproject/controller/firestore_controller.dart';
 import 'package:termproject/model/constant.dart';
+import 'package:termproject/model/photocomment.dart';
 import 'package:termproject/model/photolikedislike.dart';
 import 'package:termproject/model/photomemo.dart';
 import 'package:termproject/model/viewsharedphoto.dart';
@@ -184,6 +185,7 @@ class _Controller {
   late List<PhotoMemo> photoMemoList;
   late List<ViewSharedPhoto> newSharedPhotos;
   late List<PhotoLikeDislike> likedislike;
+  late List<PhotoComment> photoComments;
   String? searchKeyString;
   List<int> selected = [];
 
@@ -220,6 +222,7 @@ class _Controller {
       onLongPress(index);
       return;
     }
+    photoComments = await FirestoreController.getPhotoMemoComments(photoCollectionID: photoMemoList[index].docId!);
     await Navigator.pushNamed(state.context, DetailedViewScreen.routeName,
         arguments: {
           ArgKey.user: state.widget.user,
