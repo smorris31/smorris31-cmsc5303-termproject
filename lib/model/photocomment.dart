@@ -2,6 +2,7 @@ enum DocKeyPhotoComments {
   docId,
   createdBy,
   photoCollectionID,
+  photoOwner,
   comment,
   createDate,
   dateRead,
@@ -12,6 +13,7 @@ class PhotoComment {
   String? docId;
   late String createdBy;
   late String photoCollectionID;
+  late String photoOwner;
   late String comment;
   DateTime? createDate;
   DateTime? dateRead;
@@ -21,6 +23,7 @@ class PhotoComment {
     this.docId = '',
     this.createdBy = '',
     this.photoCollectionID = '',
+    this.photoOwner = '',
     this.comment = '',
     this.createDate,
     this.dateRead,
@@ -32,6 +35,7 @@ class PhotoComment {
     docId = c.docId;
     createdBy = c.createdBy;
     photoCollectionID = c.photoCollectionID;
+    photoOwner = c.photoOwner;
     comment = c.comment;
     createDate = c.createDate;
     dateRead = c.dateRead;
@@ -42,6 +46,7 @@ class PhotoComment {
     docId = c.docId;
     createdBy = c.createdBy;
     photoCollectionID = c.photoCollectionID;
+    photoOwner = c.photoOwner;
     comment = c.comment;
     createDate = c.createDate;
     dateRead = c.dateRead;
@@ -53,6 +58,7 @@ class PhotoComment {
     return {
       DocKeyPhotoComments.createdBy.name: createdBy,
       DocKeyPhotoComments.photoCollectionID.name: photoCollectionID,
+      DocKeyPhotoComments.photoOwner.name: photoOwner,
       DocKeyPhotoComments.comment.name: comment,
       DocKeyPhotoComments.createDate.name: createDate,
       DocKeyPhotoComments.dateRead.name: dateRead,
@@ -70,6 +76,7 @@ class PhotoComment {
       createdBy: doc[DocKeyPhotoComments.createdBy.name] ??= 'N/A',
       photoCollectionID: doc[DocKeyPhotoComments.photoCollectionID.name] ??=
           'N/A',
+      photoOwner: doc[DocKeyPhotoComments.photoOwner.name] ??= 'N/A',
       comment: doc[DocKeyPhotoComments.comment.name] ??='N/A',
       createDate: doc[DocKeyPhotoComments.createDate.name] != null
           ? DateTime.fromMillisecondsSinceEpoch(

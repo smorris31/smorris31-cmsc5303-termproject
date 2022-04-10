@@ -171,12 +171,11 @@ class _Controller {
         tempComment.createDate = DateTime.now();
         tempComment.createdBy = state.widget.user.email!;
         tempComment.photoCollectionID = tempMemo.docId!;
+        tempComment.photoOwner = tempMemo.createdBy;
         var id = await FirestoreController.addPhotoComment(
             photoComment: tempComment);
         tempComment.docId = id;
         state.widget.photoComment.copyFrom(tempComment);
-
-        
         tempMemo.commentsAdded = true;
         updatePhotoMemo[DocKeyPhotoMemo.commentsAdded.name] =
             tempMemo.commentsAdded;
@@ -189,8 +188,6 @@ class _Controller {
         Map<String, dynamic> update = {};
         Map<String, dynamic> updatePhotoMemo = {};
         //Update firestore comment
-        print(state.widget.photoComment.comment);
-        print(tempComment.comment);
         if (tempComment.comment != state.widget.photoComment.comment) {
           update[DocKeyPhotoComments.comment.name] = tempComment.comment;
         }

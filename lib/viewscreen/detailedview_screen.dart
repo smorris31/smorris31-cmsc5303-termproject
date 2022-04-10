@@ -26,10 +26,13 @@ class DetailedViewScreen extends StatefulWidget {
    * and then copy contents back to the original using a copy from
    */
   final PhotoMemo photoMemo;
-  final PhotoComment photoComments;
+  final List<PhotoComment> photoComments;
 
   const DetailedViewScreen(
-      {required this.user, required this.photoMemo, required this.photoComments, Key? key})
+      {required this.user,
+      required this.photoMemo,
+      required this.photoComments,
+      Key? key})
       : super(key: key);
 
   @override
@@ -47,6 +50,7 @@ class _DetailedViewState extends State<DetailedViewScreen> {
   void initState() {
     super.initState();
     con = _Controller(this);
+    con.updatePhotoCommentsCollection();
   }
 
   void render(fn) => setState(fn);
@@ -162,8 +166,44 @@ class _DetailedViewState extends State<DetailedViewScreen> {
                 validator: PhotoMemo.validateSharedWith,
                 onSaved: con.saveSharedWith,
               ),
-              Constant.devMode ? Text('Image Labels by ML\n${con.tempMemo.imageLabels}')
-                : const SizedBox(height: 1.0,),
+              Constant.devMode
+                  ? Text('Image Labels by ML\n${con.tempMemo.imageLabels}')
+                  : const SizedBox(
+                      height: 1.0,
+                    ),
+              widget.photoComments.isEmpty
+                  ? Text(
+                      'No Comments have been added!',
+                      style: Theme.of(context).textTheme.headline6,
+                    )
+                  : Column(
+                      children: [
+                        for (var comment in widget.photoComments)
+                          Card(
+                              child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Comment by: ${comment.createdBy}',
+                                  style: Theme.of(context).textTheme.headline6,
+                                ),
+                                Text(comment.createDate.toString()),
+                                const Text(''),
+                                Text(
+                                  comment.comment,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => con.replyToComment(comment),
+                                  child: const Text('Reply'),
+                                ),
+                              ],
+                            ),
+                          )),
+                      ],
+                    ),
             ],
           ),
         ),
@@ -176,6 +216,7 @@ class _Controller {
   _DetailedViewState state; //State object
   //Set to late to set the value later
   late PhotoMemo tempMemo;
+  late PhotoComment tempComment;
   //define reference photo object
   File? photo;
   String? progressMessage;
@@ -185,6 +226,20 @@ class _Controller {
   _Controller(this.state) {
     //use the photoMemo sent to this screen to make the clone
     tempMemo = PhotoMemo.clone(state.widget.photoMemo);
+  }
+
+  void updatePhotoCommentsCollection() async {
+    for (int i = state.widget.photoComments.length - 1; i >= 0; i--){
+      state.widget.photoComments[i].dateRead = DateTime.now();
+      state.widget.photoComments[i].read = true;
+      await FirestoreController.updatePhotoComment(
+        docId: state.widget.photoComments[i].docId!,
+        update: state.widget.photoComments[i].toFirestoreDoc(),
+        );
+    }
+    Map<String, dynamic> update = {};
+    update[DocKeyPhotoMemo.commentsAdded.name] = false;
+    await FirestoreController.updatePhotoMemo(docId: tempMemo.docId!, update: update);
   }
 
   void update() async {
@@ -205,14 +260,16 @@ class _Controller {
           uid: state.widget.user.uid,
           listener: (int progress) {
             state.render(() {
-              progressMessage = progress == 100 ? null : 'Uploading: $progress %';
+              progressMessage =
+                  progress == 100 ? null : 'Uploading: $progress %';
             });
           },
         );
         //once image is done load get URL
         tempMemo.photoURL = result[ArgKey.downloadURL];
         update[DocKeyPhotoMemo.photoURL.name] = tempMemo.photoURL;
-        tempMemo.imageLabels = await GoogleMLController.getImageLables(photo: photo!);
+        tempMemo.imageLabels =
+            await GoogleMLController.getImageLables(photo: photo!);
         update[DocKeyPhotoMemo.imageLabels.name] = tempMemo.imageLabels;
       }
 
@@ -231,7 +288,8 @@ class _Controller {
           sharedWith.photoCollectionID = tempMemo.docId!;
           sharedWith.sharedWithEmail = tempMemo.sharedWith[i];
           sharedWith.sharedBy = tempMemo.createdBy;
-          String shareDocID = await FirestoreController.addNewShareEntry(newShare: sharedWith);
+          String shareDocID =
+              await FirestoreController.addNewShareEntry(newShare: sharedWith);
           sharedWith.docId = shareDocID;
           //state.widget.newShareList.insert(0, sharedWith);
         }
@@ -241,7 +299,8 @@ class _Controller {
         //change has been made
         tempMemo.timestamp = DateTime.now();
         update[DocKeyPhotoMemo.timestamp.name] = tempMemo.timestamp;
-        await FirestoreController.updatePhotoMemo(docId: tempMemo.docId!, update: update);
+        await FirestoreController.updatePhotoMemo(
+            docId: tempMemo.docId!, update: update);
 
         //We not need to update the original
         state.widget.photoMemo.copyFrom(tempMemo);
@@ -260,6 +319,10 @@ class _Controller {
 
   void edit() {
     state.render(() => state.editMode = true);
+  }
+
+  void replyToComment(PhotoComment p) {
+    print('****** ${p.comment}');
   }
 
   void getPhoto(PhotoSource source) async {

@@ -229,8 +229,12 @@ class _Controller {
           // Use index to get COPY of actual content from Firestore array
           // Send COPY of actual object to Detailed view Page
           ArgKey.onePhotoMemo: photoMemoList[index],
+          ArgKey.photoComments: photoComments,
         });
-    state.render(() {});
+    photoMemoList[index].comments.clear();
+    state.render(() {
+      photoMemoList[index].commentsAdded = false;
+    });
   }
 
   void onLongPress(int index) {
