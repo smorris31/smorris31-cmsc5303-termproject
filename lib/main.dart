@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:termproject/viewscreen/addeditdeletephotocomment_screen.dart';
 import 'package:termproject/viewscreen/addphotomemo_screen.dart';
+import 'package:termproject/viewscreen/commentreply_screen.dart';
 import 'package:termproject/viewscreen/detailedview_screen.dart';
 import 'package:termproject/viewscreen/error_screen.dart';
 import 'package:termproject/viewscreen/sharedwith_screen.dart';
@@ -100,6 +101,7 @@ class TermProject extends StatelessWidget {
             );
           }
         },
+        CommentReply.routeName: (context) => const CommentReply(),
         SignUpScreen.routeName: (context) => const SignUpScreen(),
         SharedWithScreen.routeName: (context) {
           Object? args = ModalRoute.of(context)?.settings.arguments;

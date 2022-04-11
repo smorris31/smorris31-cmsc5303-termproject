@@ -5,6 +5,7 @@ class Constant {
   static const viewedSharedPhotoCollection = 'viewedphoto_collection';
   static const photoLikeDislike = 'photoLikesDislikes_collection';
   static const photoComments = 'photocomments_collection';  
+  static const photoCommentReply = 'photocommentreply_collection';
   static const pageLimit = 4;
 }
 
@@ -18,4 +19,5 @@ enum ArgKey {
   likedislike,
   photoComments,
   onePhotoComment,
+  photoCommentReply,
 }

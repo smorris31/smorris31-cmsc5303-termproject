@@ -10,6 +10,7 @@ import 'package:termproject/controller/ml_controller.dart';
 import 'package:termproject/model/constant.dart';
 import 'package:termproject/model/photocomment.dart';
 import 'package:termproject/model/viewsharedphoto.dart';
+import 'package:termproject/viewscreen/commentreply_screen.dart';
 import 'package:termproject/viewscreen/view/view_util.dart';
 import 'package:termproject/viewscreen/view/webimage.dart';
 import '../model/photomemo.dart';
@@ -321,8 +322,8 @@ class _Controller {
     state.render(() => state.editMode = true);
   }
 
-  void replyToComment(PhotoComment p) {
-    print('****** ${p.comment}');
+  void replyToComment(PhotoComment p) async {
+    await Navigator.pushNamed(state.context, CommentReply.routeName);
   }
 
   void getPhoto(PhotoSource source) async {
