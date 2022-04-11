@@ -4,7 +4,8 @@ class Constant {
   static const photoMemoCollection = 'photomemo_collection';
   static const viewedSharedPhotoCollection = 'viewedphoto_collection';
   static const photoLikeDislike = 'photoLikesDislikes_collection';
-  static const photoComments = 'photocomments_collection';
+  static const photoComments = 'photocomments_collection';  
+  static const pageLimit = 4;
 }
 
 enum ArgKey {

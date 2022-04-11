@@ -168,6 +168,28 @@ class _UserHomeState extends State<UserHomeScreen> {
                             'Timestamp: ${con.photoMemoList[index].timestamp}'),
                         Text('Likes: ${con.photoMemoList[index].like}'),
                         Text('Dislikes: ${con.photoMemoList[index].dislike}'),
+                        index == con.photoMemoList.length - 1
+                            ? Row(
+                                children: [
+                                  Expanded(
+                                    flex: 2,
+                                    child: IconButton(
+                                      onPressed: con.prev,
+                                      icon: const Icon(Icons.arrow_back),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: IconButton(
+                                      onPressed: con.next,
+                                      icon: const Icon(Icons.arrow_forward),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : const SizedBox(
+                                height: 1.0,
+                              )
                       ],
                     ),
                     onTap: () => con.detailedView(index),
@@ -222,7 +244,8 @@ class _Controller {
       onLongPress(index);
       return;
     }
-    photoComments = await FirestoreController.getPhotoMemoComments(photoCollectionID: photoMemoList[index].docId!);
+    photoComments = await FirestoreController.getPhotoMemoComments(
+        photoCollectionID: photoMemoList[index].docId!);
     await Navigator.pushNamed(state.context, DetailedViewScreen.routeName,
         arguments: {
           ArgKey.user: state.widget.user,
@@ -234,6 +257,21 @@ class _Controller {
     photoMemoList[index].comments.clear();
     state.render(() {
       photoMemoList[index].commentsAdded = false;
+    });
+  }
+
+  void next() async {
+    photoMemoList = await FirestoreController.getNextPhotomemoList(
+        email: state.widget.user.email!);
+    state.render(() {
+      photoMemoList;
+    });
+  }
+  void prev() async {
+    photoMemoList = await FirestoreController.getPreviousPhotomemoList(
+        email: state.widget.user.email!);
+    state.render(() {
+      photoMemoList;
     });
   }
 

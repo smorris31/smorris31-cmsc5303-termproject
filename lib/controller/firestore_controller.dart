@@ -5,6 +5,13 @@ import 'package:termproject/model/viewsharedphoto.dart';
 import 'package:termproject/model/constant.dart';
 import 'package:termproject/model/photomemo.dart';
 
+late QuerySnapshot prev;
+late QuerySnapshot next;
+late DocumentSnapshot<Object?> lastPhotoVisible;
+late DocumentSnapshot<Object?> firstPhotoVisible; 
+bool endOfList = false;
+bool beginOfList = false;
+
 class FirestoreController {
   static Future<String> addPhotoMemo({
     required PhotoMemo photoMemo,
@@ -42,15 +49,9 @@ class FirestoreController {
     return ref.id;
   }
 
-  static Future<List<PhotoMemo>> getPhotoMemoList({
-    required String email,
+  static Future<List<PhotoMemo>> loadPhotoSnapShot({
+    required QuerySnapshot querySnapshot,
   }) async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection(Constant.photoMemoCollection)
-        .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
-        .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
-        .get();
-
     var result = <PhotoMemo>[];
     for (var doc in querySnapshot.docs) {
       if (doc.data() != null) {
@@ -60,6 +61,101 @@ class FirestoreController {
       }
     }
     return result;
+  }
+
+  static Future<List<PhotoMemo>> getPhotoMemoList({
+    required String email,
+  }) async {
+
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(Constant.photoMemoCollection)
+        .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
+        .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
+        .limit(Constant.pageLimit)
+        .get();
+
+    if (querySnapshot.docs.length < 4) endOfList = true;
+
+    firstPhotoVisible = querySnapshot.docs[0];
+    lastPhotoVisible = querySnapshot.docs[querySnapshot.docs.length -1];
+
+    next = await FirebaseFirestore.instance 
+      .collection(Constant.photoMemoCollection)
+      .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
+      .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
+      .startAfterDocument(lastPhotoVisible)
+      .limit(Constant.pageLimit)
+      .get();
+
+    if (next.docs.length < 3) endOfList = true;
+        
+    return loadPhotoSnapShot(querySnapshot: querySnapshot);
+  }
+
+  static Future<List<PhotoMemo>> getNextPhotomemoList({
+    required String email,
+  }) async {
+    QuerySnapshot current = next;
+
+    firstPhotoVisible = next.docs[0];
+    
+    prev = await FirebaseFirestore.instance 
+        .collection(Constant.photoMemoCollection)
+        .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
+        .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
+        .endAtDocument(firstPhotoVisible)
+        .limit(Constant.pageLimit)
+        .get();
+
+      beginOfList = false;
+
+    if (!endOfList) {
+      next = await FirebaseFirestore.instance 
+          .collection(Constant.photoMemoCollection)
+          .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
+          .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
+          .startAfterDocument(lastPhotoVisible)
+          .limit(Constant.pageLimit)
+          .get();
+
+      if (next.docs.length < 3) endOfList = true;
+    }
+
+    lastPhotoVisible = current.docs[current.docs.length -1];  
+
+    return loadPhotoSnapShot(querySnapshot: current);
+  }
+
+  static Future<List<PhotoMemo>> getPreviousPhotomemoList({
+    required String email,
+  }) async {
+    QuerySnapshot current = prev;
+
+    firstPhotoVisible = prev.docs[0];
+    lastPhotoVisible = prev.docs[prev.docs.length -1];
+    
+    next = await FirebaseFirestore.instance 
+        .collection(Constant.photoMemoCollection)
+        .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
+        .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
+        .startAfterDocument(lastPhotoVisible)
+        .limit(Constant.pageLimit)
+        .get();
+        endOfList = false;
+    
+    if (!beginOfList) {
+      prev = await FirebaseFirestore.instance 
+        .collection(Constant.photoMemoCollection)
+        .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
+        .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
+        .endAtDocument(firstPhotoVisible)
+        .limit(Constant.pageLimit)
+        .get();
+        if(prev.docs.length < 4) {
+          beginOfList = true;
+        }
+    }
+    return loadPhotoSnapShot(querySnapshot: current);
   }
 
   static Future<List<PhotoLikeDislike>> getPhotoMemoLikesDislikes({
