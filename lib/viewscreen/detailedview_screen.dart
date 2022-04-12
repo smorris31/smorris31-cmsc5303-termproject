@@ -9,6 +9,7 @@ import 'package:termproject/controller/firestore_controller.dart';
 import 'package:termproject/controller/ml_controller.dart';
 import 'package:termproject/model/constant.dart';
 import 'package:termproject/model/photocomment.dart';
+import 'package:termproject/model/reply.dart';
 import 'package:termproject/model/viewsharedphoto.dart';
 import 'package:termproject/viewscreen/commentreply_screen.dart';
 import 'package:termproject/viewscreen/view/view_util.dart';
@@ -184,7 +185,7 @@ class _DetailedViewState extends State<DetailedViewScreen> {
                               child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
                                   'Comment by: ${comment.createdBy}',
@@ -230,17 +231,18 @@ class _Controller {
   }
 
   void updatePhotoCommentsCollection() async {
-    for (int i = state.widget.photoComments.length - 1; i >= 0; i--){
+    for (int i = state.widget.photoComments.length - 1; i >= 0; i--) {
       state.widget.photoComments[i].dateRead = DateTime.now();
       state.widget.photoComments[i].read = true;
       await FirestoreController.updatePhotoComment(
         docId: state.widget.photoComments[i].docId!,
         update: state.widget.photoComments[i].toFirestoreDoc(),
-        );
+      );
     }
     Map<String, dynamic> update = {};
     update[DocKeyPhotoMemo.commentsAdded.name] = false;
-    await FirestoreController.updatePhotoMemo(docId: tempMemo.docId!, update: update);
+    await FirestoreController.updatePhotoMemo(
+        docId: tempMemo.docId!, update: update);
   }
 
   void update() async {
@@ -323,7 +325,16 @@ class _Controller {
   }
 
   void replyToComment(PhotoComment p) async {
-    await Navigator.pushNamed(state.context, CommentReply.routeName);
+    List<PhotoCommentReply> commentReplies;
+
+    commentReplies =
+        await FirestoreController.getCommentReplies(commentId: p.docId!);
+
+    await Navigator.pushNamed(state.context, CommentReply.routeName,
+        arguments: {
+          ArgKey.user: state.widget.user,
+          ArgKey.photoComments: p,
+          ArgKey.photoCommentReply: commentReplies});
   }
 
   void getPhoto(PhotoSource source) async {

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:termproject/model/photocomment.dart';
 import 'package:termproject/model/photolikedislike.dart';
+import 'package:termproject/model/reply.dart';
 import 'package:termproject/model/viewsharedphoto.dart';
 import 'package:termproject/model/constant.dart';
 import 'package:termproject/model/photomemo.dart';
@@ -46,6 +47,15 @@ class FirestoreController {
     DocumentReference ref = await FirebaseFirestore.instance
         .collection(Constant.photoComments)
         .add(photoComment.toFirestoreDoc());
+    return ref.id;
+  }
+
+  static Future<String> addCommentReply({
+    required PhotoCommentReply reply,
+  }) async {
+    DocumentReference ref = await FirebaseFirestore.instance
+        .collection(Constant.photoCommentReply)
+        .add(reply.toFirestoreDoc());
     return ref.id;
   }
 
@@ -222,6 +232,26 @@ class FirestoreController {
       }
     }
     return userComment;
+  }
+
+  static Future<List<PhotoCommentReply>> getCommentReplies({
+    required String commentId,
+  }) async {
+    QuerySnapshot userCommentOnPhoto = await FirebaseFirestore.instance
+        .collection(Constant.photoCommentReply)
+        .where(DocKeyReplyComments.photoCommentID.name, isEqualTo: commentId)
+        .orderBy(DocKeyReplyComments.createDate.name, descending: true)
+        .get();
+
+    var replies = <PhotoCommentReply>[];
+    for (var doc in userCommentOnPhoto.docs) {
+      if (doc.data() != null) {
+        var document = doc.data() as Map<String, dynamic>;
+        var r = PhotoCommentReply.fromFirestoreDoc(doc: document, docId: doc.id);
+        if (r != null) replies.add(r);
+      }
+    }
+    return replies;
   }
 
   static Future<List<ViewSharedPhoto>> getNewPhotoShares({

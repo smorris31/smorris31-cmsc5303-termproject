@@ -101,8 +101,27 @@ class TermProject extends StatelessWidget {
             );
           }
         },
-        CommentReply.routeName: (context) => const CommentReply(),
+        CommentReply.routeName: (context)
+        {
+          Object? args = ModalRoute.of(context)?.settings.arguments;
+          if (args == null) {
+            return const ErrorScreen('args is null is for Comments Screen');
+          } else {
+            //We need to convert args to a map to add the user object
+            var arguments = args as Map;
+            var user = arguments[ArgKey.user];
+            var photoComment = arguments[ArgKey.photoComments];
+            var photoCommentReply = arguments[ArgKey.photoCommentReply];
+            return CommentReply(
+              user: user,
+              photoComment: photoComment,
+              photoCommentReply: photoCommentReply,
+            );
+          }
+        },
+        
         SignUpScreen.routeName: (context) => const SignUpScreen(),
+
         SharedWithScreen.routeName: (context) {
           Object? args = ModalRoute.of(context)?.settings.arguments;
           if (args == null) {
