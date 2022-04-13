@@ -31,11 +31,13 @@ class _CommentReplyState extends State<CommentReply> {
   bool editMode = false;
   late bool updatable;
   var formKey = GlobalKey<FormState>();
-
+  final TextEditingController _textController = TextEditingController();
+  
   @override
   void initState() {
     super.initState();
     con = _Controller(this);
+    _textController.clear();
   }
 
   void render(fn) => setState(fn);
@@ -109,10 +111,11 @@ class _CommentReplyState extends State<CommentReply> {
                     ),
               TextFormField(
                 enabled: editMode,
+                controller: _textController,
                 style: Theme.of(context).textTheme.bodyText1,
                 decoration: const InputDecoration(
                   hintText: 'Click edit to reply to comment',
-                ),
+                ),                
                 keyboardType: TextInputType.multiline,
                 maxLines: 6,
                 onSaved: con.saveComment,
@@ -139,12 +142,12 @@ class _Controller {
     FormState? currentState = state.formKey.currentState;
     if (currentState == null) return;
     if (!currentState.validate()) return;
+    //all onSave functions will be called
+    currentState.save();
     if (tempReply.comment.isEmpty) {
       state.render(() => state.editMode = false);
       return;
     }
-    //all onSave functions will be called
-    currentState.save();
 
     startCircularProgress(state.context);
     tempReply.createDate = DateTime.now();
@@ -155,6 +158,7 @@ class _Controller {
 
       String docId = await FirestoreController.addCommentReply(reply: tempReply);
       tempReply.docId = docId;
+      state.widget.photoCommentReply.add(tempReply);
       stopCircularProgress(state.context);
 
      } catch (e) {
@@ -162,7 +166,11 @@ class _Controller {
       if (Constant.devMode) print('=========== failed to get pic $e');
       showSnackBar(context: state.context, message: 'Failed to get pic: $e');
     }
-    state.render(() => state.editMode = false);
+    state._textController.clear();    
+    print('######### ${tempReply.comment}');
+    state.editMode = false;
+    state.render(() => state._textController);
+    //Navigator.of(state.context).pop(); 
   }
 
   void saveComment(String? value) {
