@@ -116,6 +116,11 @@ class _UserHomeState extends State<UserHomeScreen> {
                 title: const Text('Sign Out'),
                 onTap: con.signOut,
               ),
+              ListTile(
+                leading: const Icon(Icons.group),
+                title: const Text('Friends'),
+                onTap: con.friendlist,
+              ),
             ],
           ),
         ),
@@ -267,6 +272,7 @@ class _Controller {
       photoMemoList;
     });
   }
+
   void prev() async {
     photoMemoList = await FirestoreController.getPreviousPhotomemoList(
         email: state.widget.user.email!);
@@ -356,6 +362,10 @@ class _Controller {
           seconds: 20,
           message: '============ Failed to search $e');
     }
+  }
+
+  void friendlist() {
+    
   }
 
   void sharedWith() async {
