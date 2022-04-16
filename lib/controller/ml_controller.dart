@@ -47,7 +47,7 @@ class GoogleMLController {
     for (TextBlock block in textDetector.blocks) {
       for (TextLine line in block.lines) {
         for (TextElement word in line.elements) {
-          results.add(word.text);
+          results.add(word.text.toLowerCase());
           print('####### ${word.text} ###########');
         }
       }

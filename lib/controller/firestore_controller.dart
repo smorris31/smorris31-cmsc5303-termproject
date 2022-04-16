@@ -9,7 +9,7 @@ import 'package:termproject/model/photomemo.dart';
 late QuerySnapshot prev;
 late QuerySnapshot next;
 late DocumentSnapshot<Object?> lastPhotoVisible;
-late DocumentSnapshot<Object?> firstPhotoVisible; 
+late DocumentSnapshot<Object?> firstPhotoVisible;
 bool endOfList = false;
 bool beginOfList = false;
 
@@ -76,7 +76,6 @@ class FirestoreController {
   static Future<List<PhotoMemo>> getPhotoMemoList({
     required String email,
   }) async {
-
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Constant.photoMemoCollection)
         .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
@@ -87,18 +86,18 @@ class FirestoreController {
     if (querySnapshot.docs.length < 4) endOfList = true;
 
     firstPhotoVisible = querySnapshot.docs[0];
-    lastPhotoVisible = querySnapshot.docs[querySnapshot.docs.length -1];
+    lastPhotoVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
 
-    next = await FirebaseFirestore.instance 
-      .collection(Constant.photoMemoCollection)
-      .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
-      .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
-      .startAfterDocument(lastPhotoVisible)
-      .limit(Constant.pageLimit)
-      .get();
+    next = await FirebaseFirestore.instance
+        .collection(Constant.photoMemoCollection)
+        .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
+        .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
+        .startAfterDocument(lastPhotoVisible)
+        .limit(Constant.pageLimit)
+        .get();
 
     if (next.docs.length < 3) endOfList = true;
-        
+
     return loadPhotoSnapShot(querySnapshot: querySnapshot);
   }
 
@@ -108,8 +107,8 @@ class FirestoreController {
     QuerySnapshot current = next;
 
     firstPhotoVisible = next.docs[0];
-    
-    prev = await FirebaseFirestore.instance 
+
+    prev = await FirebaseFirestore.instance
         .collection(Constant.photoMemoCollection)
         .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
         .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
@@ -117,10 +116,10 @@ class FirestoreController {
         .limit(Constant.pageLimit)
         .get();
 
-      beginOfList = false;
+    beginOfList = false;
 
     if (!endOfList) {
-      next = await FirebaseFirestore.instance 
+      next = await FirebaseFirestore.instance
           .collection(Constant.photoMemoCollection)
           .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
           .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
@@ -131,7 +130,7 @@ class FirestoreController {
       if (next.docs.length < 3) endOfList = true;
     }
 
-    lastPhotoVisible = current.docs[current.docs.length -1];  
+    lastPhotoVisible = current.docs[current.docs.length - 1];
 
     return loadPhotoSnapShot(querySnapshot: current);
   }
@@ -142,28 +141,28 @@ class FirestoreController {
     QuerySnapshot current = prev;
 
     firstPhotoVisible = prev.docs[0];
-    lastPhotoVisible = prev.docs[prev.docs.length -1];
-    
-    next = await FirebaseFirestore.instance 
+    lastPhotoVisible = prev.docs[prev.docs.length - 1];
+
+    next = await FirebaseFirestore.instance
         .collection(Constant.photoMemoCollection)
         .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
         .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
         .startAfterDocument(lastPhotoVisible)
         .limit(Constant.pageLimit)
         .get();
-        endOfList = false;
-    
+    endOfList = false;
+
     if (!beginOfList) {
-      prev = await FirebaseFirestore.instance 
-        .collection(Constant.photoMemoCollection)
-        .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
-        .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
-        .endAtDocument(firstPhotoVisible)
-        .limit(Constant.pageLimit)
-        .get();
-        if(prev.docs.length < 4) {
-          beginOfList = true;
-        }
+      prev = await FirebaseFirestore.instance
+          .collection(Constant.photoMemoCollection)
+          .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
+          .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
+          .endAtDocument(firstPhotoVisible)
+          .limit(Constant.pageLimit)
+          .get();
+      if (prev.docs.length < 4) {
+        beginOfList = true;
+      }
     }
     return loadPhotoSnapShot(querySnapshot: current);
   }
@@ -190,7 +189,7 @@ class FirestoreController {
     return result;
   }
 
-   static Future<List<PhotoComment>> getPhotoMemoComments({
+  static Future<List<PhotoComment>> getPhotoMemoComments({
     required String photoCollectionID,
   }) async {
     QuerySnapshot comments = await FirebaseFirestore.instance
@@ -204,8 +203,7 @@ class FirestoreController {
     for (var doc in comments.docs) {
       if (doc.data() != null) {
         var document = doc.data() as Map<String, dynamic>;
-        var c =
-            PhotoComment.fromFirestoreDoc(doc: document, docId: doc.id);
+        var c = PhotoComment.fromFirestoreDoc(doc: document, docId: doc.id);
         if (c != null) result.add(c);
       }
     }
@@ -247,7 +245,8 @@ class FirestoreController {
     for (var doc in userCommentOnPhoto.docs) {
       if (doc.data() != null) {
         var document = doc.data() as Map<String, dynamic>;
-        var r = PhotoCommentReply.fromFirestoreDoc(doc: document, docId: doc.id);
+        var r =
+            PhotoCommentReply.fromFirestoreDoc(doc: document, docId: doc.id);
         if (r != null) replies.add(r);
       }
     }
@@ -324,6 +323,22 @@ class FirestoreController {
       );
       if (p != null) result.add(p);
     }
+
+    //Check to see if any of the search keys match text in a file
+    QuerySnapshot imageText = await FirebaseFirestore.instance
+        .collection(Constant.photoMemoCollection)
+        .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
+        .where(DocKeyPhotoMemo.imageText.name, arrayContainsAny: searchLabel)
+        .orderBy(DocKeyPhotoMemo.timestamp.name, descending: true)
+        .get();
+
+    for (var doc in imageText.docs) {
+      var p = PhotoMemo.fromFirestoreDoc(
+          doc: doc.data() as Map<String, dynamic>, 
+          docId: doc.id);
+      if (p != null) result.add(p);
+    }
+
     return result;
   }
 
@@ -334,6 +349,29 @@ class FirestoreController {
         .collection(Constant.photoMemoCollection)
         .doc(docId)
         .delete();
+  }
+
+  static Future<List> getFriendsList({
+    required String email,
+  }) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(Constant.photoMemoCollection)
+        .where(DocKeyPhotoMemo.createdBy.name, isEqualTo: email)
+        .get();
+    
+    var result = [];
+    for (var doc in querySnapshot.docs) {
+      if (doc.data() != null) {
+        var document = doc.data() as Map<String, dynamic>;
+        var p = PhotoMemo.fromFirestoreDoc(doc: document,  docId: doc.id);
+        if (p != null) {
+          for (var shared in p.sharedWith) {
+            if (shared != null && !result.contains(shared.toString())) result.add(shared.toString());
+          }            
+        }        
+      }
+    }
+    return result;
   }
 
   static Future<List<PhotoMemo>> getPhotoMemoListSharedWithMe({

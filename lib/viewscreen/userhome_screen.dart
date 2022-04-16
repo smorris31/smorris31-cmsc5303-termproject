@@ -119,7 +119,7 @@ class _UserHomeState extends State<UserHomeScreen> {
               ListTile(
                 leading: const Icon(Icons.group),
                 title: const Text('Friends'),
-                onTap: con.friendlist,
+                onTap: con.friendsList,
               ),
             ],
           ),
@@ -291,6 +291,19 @@ class _Controller {
     });
   }
 
+  void friendsList() async {
+    List results = [];
+    results = await FirestoreController.getFriendsList(
+        email: state.widget.user.email!);
+    Navigator.push(
+        state.context,
+        MaterialPageRoute(
+            builder: (context) => AlertDemo(
+                  friends: results,
+                  key: state.widget.key,
+                )));
+  }
+
   void delete() async {
     //delete photo memos in PhotoMemo list memory and firestore/store
     startCircularProgress(state.context);
@@ -364,10 +377,6 @@ class _Controller {
     }
   }
 
-  void friendlist() {
-    
-  }
-
   void sharedWith() async {
     try {
       List<PhotoMemo> photoMemoList =
@@ -392,5 +401,36 @@ class _Controller {
         message: '============= get Shared With Error $e',
       );
     }
+  }
+}
+
+class AlertDemo extends StatelessWidget {
+  const AlertDemo({required this.friends, Key? key}) : super(key: key);
+
+  final List friends;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('These are your Friends'),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: [
+            friends.isEmpty
+                ? const Text('You have not shared or have friends')
+                : ListBody(
+                    children: [for (var f in friends) Text(f.toString())]),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Close'),
+        ),
+      ],
+    );
   }
 }

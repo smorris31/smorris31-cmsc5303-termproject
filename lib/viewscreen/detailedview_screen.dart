@@ -169,7 +169,12 @@ class _DetailedViewState extends State<DetailedViewScreen> {
                 onSaved: con.saveSharedWith,
               ),
               Constant.devMode
-                  ? Text('Image Labels by ML\n${con.tempMemo.imageLabels}')
+                  ? Text('Image Labels by ML\n${con.tempMemo.imageLabels}',)
+                  : const SizedBox(
+                      height: 1.0,
+                    ),
+              Constant.devMode
+                  ? Text('Image Text by ML\n${con.tempMemo.imageText}')
                   : const SizedBox(
                       height: 1.0,
                     ),
