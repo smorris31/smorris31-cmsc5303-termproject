@@ -9,6 +9,7 @@ enum DocKeyPhotoMemo {
   photoURL,
   timestamp,
   imageLabels,
+  imageText,
   sharedWith,
   like,
   dislike,
@@ -28,6 +29,7 @@ class PhotoMemo {
   late List<dynamic>
       imageLabels; //ML generated image lables; use dynamic and let firestore determine the type
   late List<dynamic> sharedWith;
+  late List<dynamic> imageText; //ML generated image text
   late int like;
   late int dislike;
   late bool commentsAdded;
@@ -43,6 +45,7 @@ class PhotoMemo {
     this.photoURL = '',
     this.timestamp,
     List<dynamic>? imageLabels,
+    List<dynamic>? imageText,
     List<dynamic>? sharedWith,
     this.like = 0,
     this.dislike = 0,
@@ -50,6 +53,7 @@ class PhotoMemo {
     List<dynamic>? comments,
   }) {
     this.imageLabels = imageLabels == null ? [] : [...imageLabels];
+    this.imageText = imageText == null ? [] : [...imageText];
     this.sharedWith = sharedWith == null ? [] : [...sharedWith];
     this.comments = comments == null ? [] : [...comments];
   }
@@ -66,6 +70,7 @@ class PhotoMemo {
     // create a list, copy the content with spread operator
     sharedWith = [...p.sharedWith];
     imageLabels = [...p.imageLabels];
+    imageText = [...p.imageText];
     like = p.like;
     dislike = p.dislike;
     commentsAdded = p.commentsAdded;
@@ -87,6 +92,8 @@ class PhotoMemo {
     sharedWith.addAll(p.sharedWith);
     imageLabels.clear();
     imageLabels.addAll(p.imageLabels);
+    imageText.clear();
+    imageText.addAll(p.imageText);
     like = p.like;
     dislike = p.dislike;
     commentsAdded = p.commentsAdded;
@@ -105,6 +112,7 @@ class PhotoMemo {
       DocKeyPhotoMemo.timestamp.name: timestamp,
       DocKeyPhotoMemo.sharedWith.name: sharedWith,
       DocKeyPhotoMemo.imageLabels.name: imageLabels,
+      DocKeyPhotoMemo.imageText.name: imageText,
       DocKeyPhotoMemo.like.name: like,
       DocKeyPhotoMemo.dislike.name: dislike,
       DocKeyPhotoMemo.commentsAdded.name: commentsAdded,
@@ -126,6 +134,7 @@ class PhotoMemo {
       photoURL: doc[DocKeyPhotoMemo.photoURL.name] ??= 'N/A',
       sharedWith: doc[DocKeyPhotoMemo.sharedWith.name] ??= [],
       imageLabels: doc[DocKeyPhotoMemo.imageLabels.name] ??= [],
+      imageText: doc[DocKeyPhotoMemo.imageText.name] ??= [],
       timestamp: doc[DocKeyPhotoMemo.timestamp.name] != null
           ? DateTime.fromMillisecondsSinceEpoch(
               doc[DocKeyPhotoMemo.timestamp.name].millisecondsSinceEpoch,

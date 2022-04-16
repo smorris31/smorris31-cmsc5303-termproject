@@ -166,6 +166,8 @@ class _Controller {
       tempMemo.photoFilename = result[ArgKey.filename];
       tempMemo.photoURL = result[ArgKey.downloadURL];
       tempMemo.imageLabels = await GoogleMLController.getImageLables(photo: state.photo!);
+      print('######### Get Image Text ###########');
+      tempMemo.imageText = await GoogleMLController.getImageText(photo: state.photo!);
       tempMemo.createdBy = state.widget.user.email!;
       tempMemo.timestamp = DateTime.now(); // milliseconds from Jan 1, 1970
 

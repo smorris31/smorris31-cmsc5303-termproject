@@ -274,6 +274,8 @@ class _Controller {
         tempMemo.imageLabels =
             await GoogleMLController.getImageLables(photo: photo!);
         update[DocKeyPhotoMemo.imageLabels.name] = tempMemo.imageLabels;
+        tempMemo.imageText = await GoogleMLController.getImageText(photo: photo!);
+        update[DocKeyPhotoMemo.imageText.name] = tempMemo.imageText;
       }
 
       //Update firestore doc
