@@ -182,7 +182,7 @@ class _Controller {
         await FirestoreController.updatePhotoMemo(
             docId: tempMemo.docId!, update: updatePhotoMemo);
         //We not need to update the original
-        state.widget.photoMemo.copyFrom(tempMemo);
+        //state.widget.photoMemo.copyFrom(tempMemo);
       } else {
         print('*********************** Editable*****************');
         Map<String, dynamic> update = {};
@@ -201,7 +201,7 @@ class _Controller {
           await FirestoreController.updatePhotoMemo(
               docId: tempMemo.docId!, update: updatePhotoMemo);
           //We not need to update the original
-          state.widget.photoMemo.copyFrom(tempMemo);
+          //state.widget.photoMemo.copyFrom(tempMemo);
           await FirestoreController.updatePhotoComment(
               docId: tempComment.docId!, update: update);
           state.widget.photoComment.copyFrom(tempComment);
